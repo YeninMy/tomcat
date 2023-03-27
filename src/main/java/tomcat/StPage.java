@@ -15,9 +15,13 @@ import java.util.stream.Collectors;
 @WebServlet("/students")
 public class StPage extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String contextPath = request.getContextPath();
         response.setContentType("text/html;");
-        PrintWriter printWriter = response.getWriter();
+        PrintWriter out = response.getWriter();
+        String contextPath = request.getContextPath();
+
+        // read the CSS file
+        String css = CSSFileReader.read("C:\\Users\\Mukhailo\\IdeaProjects\\tomcathw\\src\\main\\java\\tomcat\\style.css");
+
 
         String sortOption = request.getParameter("sortOption");
 
@@ -34,36 +38,53 @@ public class StPage extends HttpServlet {
         }
 
         // Выводим заголовок
-        printWriter.print("<h1>Students</h1>");
+        out.println("<!DOCTYPE html>");
+        out.print("<html>");
+        out.print("<head>");
+        out.println("<meta charset='UTF-8'>");
+        out.print("<title>Students</title>");
+        out.println("<style>");
+        out.print(css);
+        out.println("</style>");
+
+        out.print("</head>");
+        out.print("<body>");
+        out.println("<div class='container'>");
+        out.print("<h1>Students</h1>");
 
         // Выводим форму с опцией выбора сортировки
-        printWriter.print("<form method='get'>");
-        printWriter.print("<label>Sort by:</label>");
-        printWriter.print("<select name='sortOption'>");
-        printWriter.print("<option value='lastNameAsc'>Last Name (A-Z)</option>");
-        printWriter.print("<option value='lastNameDesc'>Last Name (Z-A)</option>");
-        printWriter.print("</select>");
-        printWriter.print("<input type='submit' value='Sort'>");
-        printWriter.print("</form>");
+        out.print("<form сlass='sort' method='get'>");
+        out.print("<label>Sort by:</label>");
+        out.print("<select name='sortOption'>");
+        out.print("<option value='lastNameAsc'>Last Name (A-Z)</option>");
+        out.print("<option value='lastNameDesc'>Last Name (Z-A)</option>");
+        out.print("</select>");
+        out.print("<input type='submit' value='Sort'>");
+        out.print("</form>");
 
         // Выводим студентов
+        out.print("<ul>");
         for (Student student : students) {
-            printWriter.print(student.toString() + "<br>");
+            out.print("<li>" + student.toString() + "</li>");
         }
+        out.print("</ul>");
 
         // Выводим форму для добавления нового студента
-        printWriter.print("<form method='post'>");
-        printWriter.print("<label>First Name:</label>");
-        printWriter.print("<input type='text' name='firstName'><br>");
-        printWriter.print("<label>Last Name:</label>");
-        printWriter.print("<input type='text' name='lastName'><br>");
-        printWriter.print("<input type='submit' value='Add Student'>");
-        printWriter.print("</form>");
-
+        out.print("<form method='post'>");
+        out.print("<label>First Name:</label>");
+        out.print("<input type='text' name='firstName'><br>");
+        out.print("<label>Last Name:</label>");
+        out.print("<input type='text' name='lastName'><br>");
+        out.print("<input type='submit' value='Add Student'>");
+        out.print("</form>");
+        out.print("<br>");
         // Добавляем кнопку возврата в главное меню
-        printWriter.print("<a href='" + contextPath + "/'>Main menu</a><br>");
+        out.print("<a href='" + contextPath + "/'>Main menu</a><br>");
+        out.println("</div>");
+        out.print("</body>");
+        out.print("</html>");
 
-        printWriter.close();
+        out.close();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -78,3 +99,4 @@ public class StPage extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/students");
     }
 }
+

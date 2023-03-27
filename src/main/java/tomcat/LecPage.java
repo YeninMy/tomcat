@@ -16,12 +16,11 @@ import java.util.stream.Collectors;
 @WebServlet("/lec")
 public class LecPage extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String contextPath = request.getContextPath();
         response.setContentType("text/html;");
-        PrintWriter printWriter = response.getWriter();
-
+        PrintWriter out = response.getWriter();
+        String contextPath = request.getContextPath();
         String sortOption = request.getParameter("sortOption");
-
+        String css = CSSFileReader.read("C:\\Users\\Mukhailo\\IdeaProjects\\tomcathw\\src\\main\\java\\tomcat\\style.css");
         // Получаем список лекций
         List<Lecture> lectures = DataBaseUtils.getLectures();
 
@@ -33,39 +32,53 @@ public class LecPage extends HttpServlet {
                 lectures = lectures.stream().sorted(Comparator.comparing(Lecture::getName)).collect(Collectors.toList());
             }
         }
-
+        out.println("<!DOCTYPE html>");
+        out.println("<html>");
+        out.println("<head>");
+        out.println("<meta charset='UTF-8'>");
+        out.println("<title>Lectures</title>");
+        out.println("<style>");
+        out.println(css); // add the CSS content
+        out.println("</style>");
+        out.println("</head>");
+        out.println("<body>");
+        out.println("<div class='container'>");
         // Выводим заголовок
-        printWriter.print("<h1>Lectures</h1>");
+        out.print("<h1>Lectures</h1>");
 
         // Выводим форму с опцией выбора сортировки
-        printWriter.print("<form method='get'>");
-        printWriter.print("<label>Sort by:</label>");
-        printWriter.print("<select name='sortOption'>");
-        printWriter.print("<option value='date'>Date</option>");
-        printWriter.print("<option value='name'>Name</option>");
-        printWriter.print("</select>");
-        printWriter.print("<input type='submit' value='Sort'>");
-        printWriter.print("</form>");
+        out.print("<form method='get'>");
+        out.print("<label>Sort by:</label>");
+        out.print("<select name='sortOption'>");
+        out.print("<option value='date'>Date</option>");
+        out.print("<option value='name'>Name</option>");
+        out.print("</select>");
+        out.print("<input type='submit' value='Sort'>");
+        out.print("</form>");
 
         // Выводим лекции
+        out.print("<ul>");
         for (Lecture lecture : lectures) {
-            printWriter.print(lecture.toString() + "<br>");
+            out.print("<li>" + lecture.toString() + "</li>");
         }
+        out.print("</ul>");
 
         // Выводим форму для добавления лекции
-        printWriter.print("<h2>Add lecture</h2>");
-        printWriter.print("<form method='post'>");
-        printWriter.print("<label>Name:</label>");
-        printWriter.print("<input type='text' name='name'><br>");
-        printWriter.print("<label>Date:</label>");
-        printWriter.print("<input type='date' name='date'><br>");
-        printWriter.print("<input type='submit' value='Add'>");
-        printWriter.print("</form>");
-
+        out.print("<h2>Add lecture</h2>");
+        out.print("<form method='post'>");
+        out.print("<label>Name:</label>");
+        out.print("<input type='text' name='name'><br>");
+        out.print("<label>Date:</label>");
+        out.print("<input type='date' name='date'><br>");
+        out.print("<input type='submit' value='Add'>");
+        out.print("</form>");
+        out.print("<br>");
         // Добавляем кнопку возврата в главное меню
-        printWriter.print("<a href='" + contextPath + "/'>Main menu</a><br>");
-
-        printWriter.close();
+        out.print("<a href='" + contextPath + "/'>Main menu</a><br>");
+        out.println("</div>"); // закрытие контейнера
+        out.println("</body>");
+        out.println("</html>");
+        out.close();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -28,9 +28,8 @@ public class Lecture {
 
     @Override
     public String toString() {
-        return "Lecture{" +
-                "name='" + name + '\'' +
-                ", date=" + date +
-                '}';
+        return "\"" + name + "\" (" +
+                date +
+                ")";
     }
 }
